@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekapitulasi Sosialisasi KRISNA 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Spinner CSS */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 font-sans text-gray-800">
+
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+        
+        <!-- Header Formulir -->
+        <div class="bg-blue-800 p-6 text-white text-center md:text-left">
+            <h1 class="text-2xl font-bold">Rekapitulasi Sosialisasi Fitur New Sync Renja pada KRISNA Juli 2026</h1>
+            <p class="text-sm text-blue-200 mt-2">
+                Silakan mengisi formulir berikut sebagai hasil rekapitulasi sosialisasi fitur New Sync Renja pada Sistem Informasi KRISNA. Mohon pastikan seluruh data yang disampaikan telah sesuai sebelum dikirim.
+            </p>
+        </div>
+
+        <form id="rekapForm" class="p-6 md:p-8">
+            
+            <!-- Bagian 1: Identitas Responden -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-gray-700 border-b-2 border-blue-800 pb-2 mb-4">Bagian 1 – Identitas Responden</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Kementerian/Lembaga (K/L) <span class="text-red-500">*</span></label>
+                        <select id="kl" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-white">
+                            <option value="">Pilih Kementerian/Lembaga</option>
+                            <option value="Kementerian Perencanaan Pembangunan Nasional/Bappenas">Kementerian PPN/Bappenas</option>
+                            <option value="Kementerian Keuangan">Kementerian Keuangan</option>
+                            <option value="Kementerian Dalam Negeri">Kementerian Dalam Negeri</option>
+                            <!-- Tambahkan K/L lain sesuai kebutuhan -->
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Nama PIC <span class="text-red-500">*</span></label>
+                        <input type="text" id="namaPic" required placeholder="Masukkan nama PIC" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Email PIC <span class="text-red-500">*</span></label>
+                        <input type="email" id="emailPic" required placeholder="Masukkan alamat email" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Tanggal Pengisian</label>
+                        <input type="text" id="tanggalPengisian" readonly 
+                               class="w-full px-3 py-2 border border-gray-200 rounded bg-gray-100 text-gray-500 cursor-not-allowed">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pemisah -->
+            <hr class="border-gray-200 mb-8">
+
+            <!-- Bagian 2: Rekapitulasi Program -->
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-gray-700 border-b-2 border-blue-800 pb-2 mb-4">Bagian 2 – Rekapitulasi Program</h2>
+                
+                <div class="overflow-x-auto border border-gray-300 rounded shadow-sm">
+                    <div class="min-w-[1000px]">
+                        
+                        <!-- Header Tabel -->
+                        <div class="grid grid-cols-12 bg-gray-200 border-b border-gray-300 text-sm font-bold text-gray-700 p-2 text-center items-center divide-x divide-gray-300">
+                            <div class="col-span-3 px-2 text-left">Nama Program <span class="text-red-500">*</span></div>
+                            <div class="col-span-2 px-2">Status Sinkronisasi <span class="text-red-500">*</span></div>
+                            <div class="col-span-2 px-2">Jumlah Tidak Valid</div>
+                            <div class="col-span-4 px-2">Keterangan</div>
+                            <div class="col-span-1 px-2">Aksi</div>
+                        </div>
+
+                        <!-- Kontainer Baris Dinamis -->
+                        <div id="rowContainer" class="divide-y divide-gray-200">
+                            <!-- Baris di-inject melalui JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kontrol Formulir -->
+            <div class="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <button type="button" id="addBtn" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded transition-colors shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Tambah Program
+                </button>
+
+                <button type="submit" id="submitBtn" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-8 py-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm rounded transition-colors shadow">
+                    <span id="submitText">Kirim Rekapitulasi</span>
+                    <span id="submitLoader" class="loader hidden"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Logika JavaScript -->
+    <script>
+        // --- KONFIGURASI GOOGLE SHEETS ---
+        // Ganti URL di bawah dengan Web App URL dari Google Apps Script Anda
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzguEoWP1I1MQJH7jET6TqhbwqOTy3fGw3gwzwP_SzV67o4ihb8ELedKGbbbHCpujLYOQ/exec';
+        
+        const rowContainer = document.getElementById('rowContainer');
+        const addBtn = document.getElementById('addBtn');
+        const rekapForm = document.getElementById('rekapForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const submitLoader = document.getElementById('submitLoader');
+        
+        let rowCounter = 0;
+
+        // Set Tanggal Otomatis (Format Bahasa Indonesia)
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('tanggalPengisian').value = new Date().toLocaleDateString('id-ID', dateOptions);
+
+        // Fungsi membuat baris tabel
+        function createRow() {
+            rowCounter++;
+            const rowId = `row-${rowCounter}`;
+            
+            const rowHTML = `
+                <div id="${rowId}" class="grid grid-cols-12 text-sm divide-x divide-gray-200 items-start hover:bg-blue-50 transition-colors p-1">
+                    
+                    <!-- Nama Program -->
+                    <div class="col-span-3 p-1">
+                        <input type="text" name="namaProgram[]" required placeholder="Masukkan nama program" 
+                            class="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+                    
+                    <!-- Status Sinkronisasi -->
+                    <div class="col-span-2 p-1">
+                        <select name="statusSinkronisasi[]" onchange="toggleConditionalFields('${rowId}', this.value)" required
+                            class="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:border-blue-600 bg-white">
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Sudah Sinkron">Sudah Sinkron</option>
+                            <option value="Belum Sinkron">Belum Sinkron</option>
+                            <option value="Tidak Valid">Tidak Valid</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Jumlah Tidak Valid -->
+                    <div class="col-span-2 p-1">
+                        <input type="number" name="jumlahTidakValid[]" min="1" disabled placeholder="-"
+                            class="invalid-count-field w-full px-2 py-1.5 border border-gray-200 rounded focus:outline-none focus:border-blue-600 bg-gray-100 text-gray-400 cursor-not-allowed text-center">
+                    </div>
+                    
+                    <!-- Keterangan -->
+                    <div class="col-span-4 p-1">
+                        <textarea name="keterangan[]" rows="2" disabled placeholder="-"
+                            class="remarks-field w-full px-2 py-1.5 border border-gray-200 rounded focus:outline-none focus:border-blue-600 bg-gray-100 text-gray-400 cursor-not-allowed resize-y"></textarea>
+                    </div>
+                    
+                    <!-- Aksi (Hapus) -->
+                    <div class="col-span-1 p-1 text-center flex items-center justify-center h-full">
+                        <button type="button" onclick="deleteRow('${rowId}')" title="Hapus Baris"
+                                class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition-colors focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            rowContainer.insertAdjacentHTML('beforeend', rowHTML);
+        }
+
+        // Logika Validasi Bersyarat
+        window.toggleConditionalFields = function(rowId, statusValue) {
+            const row = document.getElementById(rowId);
+            const invalidField = row.querySelector('.invalid-count-field');
+            const remarksField = row.querySelector('.remarks-field');
+
+            if (statusValue === 'Tidak Valid') {
+                invalidField.disabled = false;
+                invalidField.required = true;
+                invalidField.placeholder = "0";
+                invalidField.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed', 'border-gray-200');
+                invalidField.classList.add('bg-white', 'border-gray-300', 'text-gray-800');
+
+                remarksField.disabled = false;
+                remarksField.required = true;
+                remarksField.placeholder = "Mohon mencantumkan kode validasi beserta deskripsinya.";
+                remarksField.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed', 'border-gray-200');
+                remarksField.classList.add('bg-white', 'border-gray-300', 'text-gray-800');
+            } else {
+                invalidField.disabled = true;
+                invalidField.required = false;
+                invalidField.value = "";
+                invalidField.placeholder = "-";
+                invalidField.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed', 'border-gray-200');
+                invalidField.classList.remove('bg-white', 'border-gray-300', 'text-gray-800');
+
+                remarksField.disabled = true;
+                remarksField.required = false;
+                remarksField.value = "";
+                remarksField.placeholder = "-";
+                remarksField.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed', 'border-gray-200');
+                remarksField.classList.remove('bg-white', 'border-gray-300', 'text-gray-800');
+            }
+        }
+
+        // Hapus Baris
+        window.deleteRow = function(rowId) {
+            const rows = rowContainer.children;
+            if (rows.length > 1) {
+                document.getElementById(rowId).remove();
+            } else {
+                alert("Minimal harus ada satu program dalam rekapitulasi.");
+            }
+        }
+
+        // Event Listener Tambah Program
+        addBtn.addEventListener('click', createRow);
+
+        // Menangani Pengiriman Formulir (Submit)
+        rekapForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rows = rowContainer.children;
+            if(rows.length === 0) return;
+
+            // 1. Ambil data Identitas Responden
+            const identityData = {
+                kementerianLembaga: document.getElementById('kl').value,
+                namaPIC: document.getElementById('namaPic').value,
+                emailPIC: document.getElementById('emailPic').value,
+                tanggalPengisian: document.getElementById('tanggalPengisian').value
+            };
+
+            // 2. Ambil data Tabel Program
+            const programsData = [];
+            Array.from(rows).forEach(row => {
+                programsData.push({
+                    namaProgram: row.querySelector('input[name="namaProgram[]"]').value,
+                    statusSinkronisasi: row.querySelector('select[name="statusSinkronisasi[]"]').value,
+                    jumlahTidakValid: row.querySelector('input[name="jumlahTidakValid[]"]').value || "-",
+                    keterangan: row.querySelector('textarea[name="keterangan[]"]').value || "-"
+                });
+            });
+
+            // Payload Final
+            const payload = {
+                identity: identityData,
+                programs: programsData
+            };
+
+            // UI Loading State
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            submitText.textContent = "Mengirim...";
+            submitLoader.classList.remove('hidden');
+
+            try {
+                // Proses Pengiriman ke Google Sheets (Menggunakan text/plain untuk menghindari CORS Preflight)
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
+                });
+                
+                const result = await response.json();
+                
+                if(result.result === "success") {
+                    alert("Terima kasih. Rekapitulasi telah berhasil dikirim.");
+                    rekapForm.reset();
+                    rowContainer.innerHTML = ''; 
+                    createRow(); // Reset tabel ke 1 baris
+                    document.getElementById('tanggalPengisian').value = new Date().toLocaleDateString('id-ID', dateOptions);
+                } else {
+                    alert("Gagal mengirim data: " + result.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Terjadi kesalahan jaringan. Gagal menghubungi server Google Sheets.");
+            } finally {
+                // Restore UI
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                submitText.textContent = "Kirim Rekapitulasi";
+                submitLoader.classList.add('hidden');
+            }
+        });
+
+        // Inisialisasi baris pertama saat halaman dimuat
+        createRow();
+    </script>
+</body>
+</html>
