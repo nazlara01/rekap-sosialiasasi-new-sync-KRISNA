@@ -44,16 +44,29 @@
                 <h2 class="text-lg font-bold text-gray-700 border-b-2 border-blue-800 pb-2 mb-4">Bagian 1 – Identitas Responden</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    <div>
+                    <!-- Searchable K/L Dropdown -->
+                    <div class="relative" id="klContainer">
                         <label class="block text-sm font-semibold mb-1">Kementerian/Lembaga (K/L) <span class="text-red-500">*</span></label>
-                        <select id="kl" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-white">
-                            <option value="">Pilih Kementerian/Lembaga</option>
-                            <option value="Kementerian Perencanaan Pembangunan Nasional/Bappenas">Kementerian PPN/Bappenas</option>
-                            <option value="Kementerian Keuangan">Kementerian Keuangan</option>
-                            <option value="Kementerian Dalam Negeri">Kementerian Dalam Negeri</option>
-                            <!-- Tambahkan K/L lain sesuai kebutuhan -->
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
+                        
+                        <!-- Input Pencarian -->
+                        <div class="relative">
+                            <input type="text" id="klSearch" autocomplete="off" placeholder="Ketik untuk mencari K/L..." 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-white placeholder-gray-400">
+                            <!-- Ikon Pencarian -->
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Input Tersembunyi (Menyimpan data untuk di-submit) -->
+                        <input type="hidden" id="kl" required>
+                        
+                        <!-- Daftar Dropdown Kustom -->
+                        <ul id="klDropdown" class="absolute z-10 w-full bg-white border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto hidden shadow-lg text-sm divide-y divide-gray-100">
+                            <!-- List di-inject melalui JS -->
+                        </ul>
                     </div>
 
                     <div>
@@ -83,27 +96,38 @@
             <div class="mb-4">
                 <h2 class="text-lg font-bold text-gray-700 border-b-2 border-blue-800 pb-2 mb-4">Bagian 2 – Rekapitulasi Program</h2>
                 
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 mb-4 rounded-r">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-blue-800">Petunjuk Pengisian Data Tidak Valid</h3>
+                            <div class="mt-1 text-sm text-blue-700">
+                                <p>Jika jumlah data yang berstatus <strong>Tidak Valid</strong> terlalu banyak untuk dituliskan satu per satu, K/L diperkenankan untuk menyematkan <strong>Tautan (Link) Google Drive</strong> yang berisi rekapitulasi data/sistem terkait pada kolom <strong>Keterangan</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto border border-gray-300 rounded shadow-sm">
-                    <div class="min-w-[1000px]">
+                    <div class="min-w-[1100px]">
                         
-                        <!-- Header Tabel -->
                         <div class="grid grid-cols-12 bg-gray-200 border-b border-gray-300 text-sm font-bold text-gray-700 p-2 text-center items-center divide-x divide-gray-300">
+                            <div class="col-span-1 px-2 text-left">Kode <span class="text-red-500">*</span></div>
                             <div class="col-span-3 px-2 text-left">Nama Program <span class="text-red-500">*</span></div>
                             <div class="col-span-2 px-2">Status Sinkronisasi <span class="text-red-500">*</span></div>
                             <div class="col-span-2 px-2">Jumlah Tidak Valid</div>
-                            <div class="col-span-4 px-2">Keterangan</div>
+                            <div class="col-span-3 px-2">Keterangan (Catatan / Link)</div>
                             <div class="col-span-1 px-2">Aksi</div>
                         </div>
 
-                        <!-- Kontainer Baris Dinamis -->
                         <div id="rowContainer" class="divide-y divide-gray-200">
-                            <!-- Baris di-inject melalui JS -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Kontrol Formulir -->
             <div class="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <button type="button" id="addBtn" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded transition-colors shadow">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
@@ -118,11 +142,168 @@
         </form>
     </div>
 
-    <!-- Logika JavaScript -->
     <script>
-        // --- KONFIGURASI GOOGLE SHEETS ---
-        // Ganti URL di bawah dengan Web App URL dari Google Apps Script Anda
+        // PASTIKAN URL WEB APP ANDA YANG BARU DIMASUKKAN DI SINI
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzguEoWP1I1MQJH7jET6TqhbwqOTy3fGw3gwzwP_SzV67o4ihb8ELedKGbbbHCpujLYOQ/exec';
+        // --- DATA & LOGIKA PENCARIAN KEMENTERIAN/LEMBAGA ---
+        const daftarKL = [
+            "001 - Majelis Permusyawaratan Rakyat (MPR)",
+            "002 - Dewan Perwakilan Rakyat (DPR)",
+            "004 - Badan Pemeriksa Keuangan (BPK)",
+            "005 - Mahkamah Agung (MA)",
+            "006 - Kejaksaan Agung",
+            "007 - Sekretariat Negara (Setneg)",
+            "010 - Kementerian Dalam Negeri (Kemendagri)",
+            "011 - Kementerian Luar Negeri (Kemenlu)",
+            "012 - Kementerian Pertahanan (Kemhan)",
+            "015 - Kementerian Keuangan (Kemenkeu)",
+            "018 - Kementerian Pertanian (Kementan)",
+            "019 - Kementerian Perindustrian (Kemenperin)",
+            "020 - Kementerian Energi dan Sumber Daya Mineral (Kemen ESDM)",
+            "022 - Kementerian Perhubungan (Kemenhub)",
+            "024 - Kementerian Kesehatan (Kemenkes)",
+            "025 - Kementerian Agama (Kemenag)",
+            "026 - Kementerian Ketenagakerjaan (Kemnaker)",
+            "027 - Kementerian Sosial (Kemensos)",
+            "032 - Kementerian Kelautan dan Perikanan (KKP)",
+            "035 - Kementerian Koordinator Bidang Perekonomian (Kemenko Ekon)",
+            "036 - Kementerian Koordinator Bidang Pembangunan Manusia dan Kebudayaan (Kemenko PMK)",
+            "041 - Kementerian Badan Usaha Milik Negara (Kemen BUMN)",
+            "047 - Kementerian Pemberdayaan Perempuan dan Perlindungan Anak (Kemen PPPA)",
+            "048 - Kementerian Pendayagunaan Aparatur Negara dan Reformasi Birokrasi (Kemen PANRB)",
+            "050 - Badan Intelijen Negara (BIN)",
+            "051 - Badan Siber dan Sandi Negara (BSSN)",
+            "054 - Badan Pusat Statistik (BPS)",
+            "055 - Kementerian PPN/Bappenas",
+            "056 - Kementerian Agraria dan Tata Ruang/Badan Pertanahan Nasional (Kemen ATR/BPN)",
+            "057 - Perpustakaan Nasional RI (Perpusnas)",
+            "059 - Kementerian Komunikasi dan Digital (Komdigi)",
+            "060 - Kepolisian RI (Polri)",
+            "063 - Badan Pengawas Obat dan Makanan (BPOM)",
+            "064 - Lembaga Ketahanan Nasional (Lemhannas)",
+            "065 - Kementerian Investasi/Badan Koordinasi Penanaman Modal (Kemen Invest/BKPM)",
+            "066 - Badan Narkotika Nasional (BNN)",
+            "068 - Badan Kependudukan dan Keluarga Berencana (BKKBN)",
+            "074 - Komisi Nasional Hak Asasi Manusia (Komnas HAM)",
+            "075 - Badan Meteorologi Klimatologi dan Geofisika (BMKG)",
+            "076 - Komisi Pemilihan Umum (KPU)",
+            "077 - Mahkamah Konstitusi (MK)",
+            "078 - Pusat Pelaporan dan Analisis Transaksi Keuangan (PPATK)",
+            "083 - Badan Informasi Geospasial (BIG)",
+            "084 - Badan Standarisasi Negara (BSN)",
+            "085 - Badan Pengawas Tenaga Nuklir (Bapeten)",
+            "086 - Lembaga Administrasi Negara (LAN)",
+            "087 - Arsip Nasional RI (ANRI)",
+            "088 - Badan Kepegawaian Negara (BKN)",
+            "089 - Badan Pengawasan Keuangan dan Pembangunan (BPKP)",
+            "090 - Kementerian Perdagangan (Kemendag)",
+            "092 - Kementerian Pemuda dan Olahraga (Kemenpora)",
+            "093 - Komisi Pemberantasan Korupsi (KPK)",
+            "095 - Dewan Perwakilan Daerah (DPD)",
+            "100 - Komisi Yudisial (KY)",
+            "103 - Badan Nasional Penanggulangan Bencana (BNPB)",
+            "104 - Badan Pelindungan Pekerja Migran Indonesia (BP2MI)",
+            "106 - Lembaga Kebijakan Pengadaan Barang/Jasa Pemerintah (LKPP)",
+            "107 - Badan Nasional Pencarian dan Pertolongan (Basarnas)",
+            "108 - Komisi Pengawas Persaingan Usaha (KPPU)",
+            "110 - Ombudsman RI (ORI)",
+            "111 - Badan Nasional Pengelola Perbatasan (BNPP)",
+            "112 - Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Batam (BP Batam)",
+            "113 - Badan Nasional Penanggulangan Terorisme (BNPT)",
+            "115 - Badan Pengawas Pemilihan Umum (Bawaslu)",
+            "116 - Lembaga Penyiaran Publik Radio Republik Indonesia (RRI)",
+            "117 - Lembaga Penyiaran Publik Televisi Republik Indonesia (TVRI)",
+            "118 - Badan Pengusahaan Kawasan Perdagangan Bebas dan Pelabuhan Bebas Sabang (BP Sabang)",
+            "119 - Badan Keamanan Laut RI (Bakamla)",
+            "122 - Badan Pembinaan Ideologi Pancasila (BPIP)",
+            "123 - Lembaga Perlindungan Saksi dan Korban (LPSK)",
+            "124 - Badan Riset dan Inovasi Nasional (BRIN)",
+            "125 - Badan Pangan Nasional (Bapanas)",
+            "126 - Otorita Ibu Kota Nusantara (OIKN)",
+            "127 - Badan Karantina Indonesia (Barantin)",
+            "128 - Badan Gizi Nasional (BGN)",
+            "129 - Kementerian Koordinator Bidang Politik dan Keamanan (Kemenko Polkam)",
+            "130 - Kementerian Koordinator Bidang Hukum, HAM, Imigrasi, dan Pemasyarakatan (Kemenko KumhamImPas)",
+            "131 - Kementerian Koordinator Bidang Pangan (Kemenko Pangan)",
+            "132 - Kementerian Koordinator Bidang Infrastruktur dan Pembangunan Kewilayahan (Kemenko Infras Wil)",
+            "134 - Kementerian Koordinator Bidang Pemberdayaan Masyarakat (Kemenko PM)",
+            "135 - Kementerian Hukum (Kemenkum)",
+            "136 - Kementerian Hak Asasi Manusia (Kemenham)",
+            "137 - Kementerian Imigrasi dan Pemasyarakatan (Kemen Imipas)",
+            "138 - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen)",
+            "139 - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek)",
+            "140 - Kementerian Kebudayaan (Kemenbud)",
+            "141 - Badan Penyelenggara Haji (BP Haji)",
+            "142 - Badan Penyelenggara Jaminan Produk Halal (BP JP Halal)",
+            "143 - Kementerian Kehutanan (Kemen Hut)",
+            "144 - Kementerian Lingkungan Hidup / Badan Pengendalian Lingkungan Hidup (Kemen LH/BPLH)",
+            "145 - Kementerian Pekerjaan Umum (Kemen PU)",
+            "146 - Kementerian Perumahan dan Kawasan Permukiman (Kemen PKP)",
+            "147 - Kementerian Pariwisata (Kemen Par)",
+            "148 - Kementerian Ekonomi Kreatif/Badan Ekonomi Kreatif (Kemen Ekraf)",
+            "149 - Kementerian Koperasi (Kemen Kop)",
+            "150 - Kementerian Usaha Mikro, Kecil, dan Menengah (Kemen UMKM)",
+            "151 - Kementerian Desa dan Pembangunan Daerah Tertinggal (Kemen Des PDT)",
+            "152 - Kementerian Transmigrasi (Kemen Transmigrasi)"
+        ];
+
+        const klSearch = document.getElementById('klSearch');
+        const klInput = document.getElementById('kl');
+        const klDropdown = document.getElementById('klDropdown');
+        const klContainer = document.getElementById('klContainer');
+
+        // Fungsi merender daftar dropdown
+        function renderKLDot(filter = '') {
+            klDropdown.innerHTML = '';
+            const filtered = daftarKL.filter(kl => kl.toLowerCase().includes(filter.toLowerCase()));
+            
+            if (filtered.length === 0) {
+                klDropdown.innerHTML = '<li class="px-4 py-2 text-gray-500 italic">K/L tidak ditemukan</li>';
+            } else {
+                filtered.forEach(kl => {
+                    const li = document.createElement('li');
+                    li.textContent = kl;
+                    li.className = 'px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-700 transition-colors';
+                    li.addEventListener('click', () => {
+                        klSearch.value = kl; // Update tampilan
+                        klInput.value = kl;  // Update value tersembunyi
+                        klDropdown.classList.add('hidden'); // Tutup dropdown
+                        klSearch.classList.remove('border-red-500'); // Hapus error validasi jika ada
+                    });
+                    klDropdown.appendChild(li);
+                });
+            }
+        }
+
+        // Buka dropdown saat input diklik
+        klSearch.addEventListener('focus', () => {
+            renderKLDot(klSearch.value);
+            klDropdown.classList.remove('hidden');
+        });
+
+        // Filter daftar saat mengetik
+        klSearch.addEventListener('input', (e) => {
+            klInput.value = ''; // Reset nilai valid jika diketik ulang
+            renderKLDot(e.target.value);
+            klDropdown.classList.remove('hidden');
+        });
+
+        // Tutup dropdown jika klik di luar area
+        document.addEventListener('click', (e) => {
+            if (!klContainer.contains(e.target)) {
+                klDropdown.classList.add('hidden');
+            }
+        });
+
+        // Validasi kustom sebelum submit (pastikan user memilih dari daftar)
+        klSearch.addEventListener('blur', () => {
+            if (klSearch.value !== '' && klInput.value === '') {
+                // Jika mengetik tapi tidak memilih dari daftar
+                klSearch.value = '';
+                klSearch.placeholder = "Harap pilih K/L dari daftar...";
+            }
+        });
+        // --- AKHIR LOGIKA PENCARIAN ---
         
         const rowContainer = document.getElementById('rowContainer');
         const addBtn = document.getElementById('addBtn');
@@ -133,11 +314,9 @@
         
         let rowCounter = 0;
 
-        // Set Tanggal Otomatis (Format Bahasa Indonesia)
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('tanggalPengisian').value = new Date().toLocaleDateString('id-ID', dateOptions);
 
-        // Fungsi membuat baris tabel
         function createRow() {
             rowCounter++;
             const rowId = `row-${rowCounter}`;
@@ -145,13 +324,16 @@
             const rowHTML = `
                 <div id="${rowId}" class="grid grid-cols-12 text-sm divide-x divide-gray-200 items-start hover:bg-blue-50 transition-colors p-1">
                     
-                    <!-- Nama Program -->
+                    <div class="col-span-1 p-1">
+                        <input type="text" name="kode[]" required placeholder="Kode" 
+                            class="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+
                     <div class="col-span-3 p-1">
                         <input type="text" name="namaProgram[]" required placeholder="Masukkan nama program" 
                             class="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:border-blue-600 bg-white">
                     </div>
                     
-                    <!-- Status Sinkronisasi -->
                     <div class="col-span-2 p-1">
                         <select name="statusSinkronisasi[]" onchange="toggleConditionalFields('${rowId}', this.value)" required
                             class="w-full px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:border-blue-600 bg-white">
@@ -162,19 +344,16 @@
                         </select>
                     </div>
                     
-                    <!-- Jumlah Tidak Valid -->
                     <div class="col-span-2 p-1">
                         <input type="number" name="jumlahTidakValid[]" min="1" disabled placeholder="-"
                             class="invalid-count-field w-full px-2 py-1.5 border border-gray-200 rounded focus:outline-none focus:border-blue-600 bg-gray-100 text-gray-400 cursor-not-allowed text-center">
                     </div>
                     
-                    <!-- Keterangan -->
-                    <div class="col-span-4 p-1">
+                    <div class="col-span-3 p-1">
                         <textarea name="keterangan[]" rows="2" disabled placeholder="-"
                             class="remarks-field w-full px-2 py-1.5 border border-gray-200 rounded focus:outline-none focus:border-blue-600 bg-gray-100 text-gray-400 cursor-not-allowed resize-y"></textarea>
                     </div>
                     
-                    <!-- Aksi (Hapus) -->
                     <div class="col-span-1 p-1 text-center flex items-center justify-center h-full">
                         <button type="button" onclick="deleteRow('${rowId}')" title="Hapus Baris"
                                 class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition-colors focus:outline-none">
@@ -186,7 +365,6 @@
             rowContainer.insertAdjacentHTML('beforeend', rowHTML);
         }
 
-        // Logika Validasi Bersyarat
         window.toggleConditionalFields = function(rowId, statusValue) {
             const row = document.getElementById(rowId);
             const invalidField = row.querySelector('.invalid-count-field');
@@ -201,7 +379,7 @@
 
                 remarksField.disabled = false;
                 remarksField.required = true;
-                remarksField.placeholder = "Mohon mencantumkan kode validasi beserta deskripsinya.";
+                remarksField.placeholder = "Cantumkan kode/deskripsi, atau paste link GDrive di sini...";
                 remarksField.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed', 'border-gray-200');
                 remarksField.classList.add('bg-white', 'border-gray-300', 'text-gray-800');
             } else {
@@ -221,7 +399,6 @@
             }
         }
 
-        // Hapus Baris
         window.deleteRow = function(rowId) {
             const rows = rowContainer.children;
             if (rows.length > 1) {
@@ -231,17 +408,14 @@
             }
         }
 
-        // Event Listener Tambah Program
         addBtn.addEventListener('click', createRow);
 
-        // Menangani Pengiriman Formulir (Submit)
         rekapForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const rows = rowContainer.children;
             if(rows.length === 0) return;
 
-            // 1. Ambil data Identitas Responden
             const identityData = {
                 kementerianLembaga: document.getElementById('kl').value,
                 namaPIC: document.getElementById('namaPic').value,
@@ -249,10 +423,10 @@
                 tanggalPengisian: document.getElementById('tanggalPengisian').value
             };
 
-            // 2. Ambil data Tabel Program
             const programsData = [];
             Array.from(rows).forEach(row => {
                 programsData.push({
+                    kode: row.querySelector('input[name="kode[]"]').value, // DATA KODE DITARIK DI SINI
                     namaProgram: row.querySelector('input[name="namaProgram[]"]').value,
                     statusSinkronisasi: row.querySelector('select[name="statusSinkronisasi[]"]').value,
                     jumlahTidakValid: row.querySelector('input[name="jumlahTidakValid[]"]').value || "-",
@@ -260,20 +434,17 @@
                 });
             });
 
-            // Payload Final
             const payload = {
                 identity: identityData,
                 programs: programsData
             };
 
-            // UI Loading State
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
             submitText.textContent = "Mengirim...";
             submitLoader.classList.remove('hidden');
 
             try {
-                // Proses Pengiriman ke Google Sheets (Menggunakan text/plain untuk menghindari CORS Preflight)
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
@@ -286,7 +457,7 @@
                     alert("Terima kasih. Rekapitulasi telah berhasil dikirim.");
                     rekapForm.reset();
                     rowContainer.innerHTML = ''; 
-                    createRow(); // Reset tabel ke 1 baris
+                    createRow(); 
                     document.getElementById('tanggalPengisian').value = new Date().toLocaleDateString('id-ID', dateOptions);
                 } else {
                     alert("Gagal mengirim data: " + result.error);
@@ -295,7 +466,6 @@
                 console.error('Error:', error);
                 alert("Terjadi kesalahan jaringan. Gagal menghubungi server Google Sheets.");
             } finally {
-                // Restore UI
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
                 submitText.textContent = "Kirim Rekapitulasi";
@@ -303,9 +473,7 @@
             }
         });
 
-        // Inisialisasi baris pertama saat halaman dimuat
         createRow();
     </script>
 </body>
 </html>
-
